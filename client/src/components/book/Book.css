@@ -14,3 +14,9 @@
   cursor: pointer;
   float: right;
 }
+
+.Book-Edit {
+  padding: .85em;
+  color: #CCC;
+  cursor: pointer;
+}
