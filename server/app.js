@@ -18,10 +18,37 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.get('/api/ping', (req, res, next) => {
   res.json({ message: 'pong!' })
 })
+
+app.get('/api/books', (req, res, next) => {
+  knex('books').orderBy('id', 'desc').then(books => res.json({books: books}))
+})
+
+app.post('/api/books', (req, res, next) => {
+  knex('books').insert(req.body).then(() => {
+    knex('books').orderBy('id', 'desc').then(books => res.json(books))
+  })
+})
+
+/* PATCH update a book. */
+app.patch('/api/books/:id', function(req, res) {
+  knex('books').update(req.body).where('id', req.params.id)
+  .then(function() {
+    knex('books').orderBy('id', 'desc').then(books => res.json(books))
+  })
+})
+
+app.delete('/api/books/:id', (req, res, next) => {
+  knex('books').del().where('id', req.params.id)
+    .then(() => {
+      knex('books').orderBy('id', 'desc').then(books => res.json(books))
+    })
+})
+
 app.get('/', (req, res, next) => {
   const index = path.join(__dirname, '../client/build/index.html')
   res.sendFile(index)
 })
+
 // handle error
 app.use((err, req, res, next) => {
   const status = err.status || 500
